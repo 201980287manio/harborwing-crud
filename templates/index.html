@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+<p>Connected to the database. Row counts:</p>
+<table>
+  <thead><tr><th>Table</th><th>Rows</th></tr></thead>
+  <tbody>
+  {% for table, n in counts.items() %}
+    <tr><td>{{ table }}</td><td>{{ n }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Airports{% endblock %}
+{% block content %}
+<div class="head">
+  <h1>Airports</h1>
+  <a class="btn" href="{{ url_for('airports.create') }}">+ New airport</a>
+</div>
+<form method="get" class="search">
+  <input name="q" value="{{ q }}" placeholder="Search code, name, city or country">
+  <button type="submit">Search</button>
+  {% if q %}<a href="{{ url_for('airports.index') }}">Clear</a>{% endif %}
+</form>
+<table>
+  <thead><tr><th>Code</th><th>Name</th><th>City</th><th>State/Province</th><th>Country</th><th></th></tr></thead>
+  <tbody>
+  {% for a in airports %}
+    <tr>
+      <td>{{ a.airport_code }}</td>
+      <td>{{ a.airport_name }}</td>
+      <td>{{ a.city }}</td>
+      <td>{{ a.state_province_county or '' }}</td>
+      <td>{{ a.country }}</td>
+      <td class="actions">
+        <a href="{{ url_for('airports.edit', code=a.airport_code) }}">Edit</a>
+        <form method="post" action="{{ url_for('airports.delete', code=a.airport_code) }}"
+              onsubmit="return confirm('Delete airport {{ a.airport_code }}?');">
+          <button type="submit" class="danger">Delete</button>
+        </form>
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6">No airports found.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

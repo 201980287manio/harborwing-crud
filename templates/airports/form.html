@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ 'New airport' if creating else 'Edit airport' }}{% endblock %}
+{% block content %}
+<h1>{{ 'New airport' if creating else 'Edit airport ' ~ airport.airport_code }}</h1>
+<form method="post" class="form">
+  <label>Airport code (3 letters)
+    <input name="airport_code" maxlength="3" value="{{ airport.airport_code or '' }}"
+           {{ 'required' if creating else 'readonly' }}>
+  </label>
+  <label>Airport name
+    <input name="airport_name" maxlength="150" value="{{ airport.airport_name or '' }}" required>
+  </label>
+  <label>City
+    <input name="city" maxlength="100" value="{{ airport.city or '' }}" required>
+  </label>
+  <label>State / province / county
+    <input name="state_province_county" maxlength="100" value="{{ airport.state_province_county or '' }}">
+  </label>
+  <label>Country
+    <input name="country" maxlength="100" value="{{ airport.country or '' }}" required>
+  </label>
+  <label>Other details
+    <textarea name="other_details" rows="3">{{ airport.other_details or '' }}</textarea>
+  </label>
+  <div>
+    <button type="submit">Save</button>
+    <a href="{{ url_for('airports.index') }}">Cancel</a>
+  </div>
+</form>
+{% endblock %}
