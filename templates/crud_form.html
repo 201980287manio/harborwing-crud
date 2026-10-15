@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ heading }}{% endblock %}
+{% block content %}
+<h1>{{ heading }}</h1>
+<form method="post" class="form">
+  {% for f in fields %}
+  <label>{{ f.label }}
+    {% if f.type == 'textarea' %}
+      <textarea name="{{ f.name }}" rows="3" maxlength="{{ f.maxlength }}">{{ values[f.name] or '' }}</textarea>
+    {% elif f.type == 'select' %}
+      <select name="{{ f.name }}" {{ 'required' if f.required }}>
+        {% for option in f.options %}
+          <option value="{{ option }}" {{ 'selected' if values[f.name] == option }}>{{ option }}</option>
+        {% endfor %}
+      </select>
+    {% else %}
+      <input type="{{ f.type }}" name="{{ f.name }}" value="{{ values[f.name] or '' }}"
+             {% if f.maxlength %}maxlength="{{ f.maxlength }}"{% endif %}
+             {% if f.step %}step="{{ f.step }}"{% endif %}
+             {% if f.min %}min="{{ f.min }}"{% endif %}
+             {{ 'required' if f.required }}>
+    {% endif %}
+  </label>
+  {% endfor %}
+  <div>
+    <button type="submit">Save</button>
+    <a href="{{ cancel_url }}">Cancel</a>
+  </div>
+</form>
+{% endblock %}
