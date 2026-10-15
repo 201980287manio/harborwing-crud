@@ -61,3 +61,22 @@ def execute(sql, params=()):
         raise
     finally:
         cur.close()
+
+
+def run_transaction(statements):
+    """Run several statements as ONE transaction: all succeed or none do.
+
+    statements: list of (sql, params). If any statement fails, everything is
+    rolled back, so related tables never end up half-updated.
+    """
+    db = get_db()
+    cur = db.cursor()
+    try:
+        for sql, params in statements:
+            cur.execute(sql, params)
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    finally:
+        cur.close()

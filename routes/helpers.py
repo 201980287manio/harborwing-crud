@@ -1,4 +1,6 @@
 """Shared helpers for the CRUD modules."""
+from datetime import datetime
+
 from flask import flash
 from mysql.connector import IntegrityError
 
@@ -42,3 +44,14 @@ def safe_delete(table, id_column, item_id, label, usage_checks):
         raise
     flash(f"{label} was deleted.", "success")
     return True
+
+
+def parse_datetime(raw):
+    """'2026-10-01T14:30' -> datetime. Empty text -> None. Bad text -> ValueError."""
+    raw = (raw or "").strip()
+    return datetime.fromisoformat(raw) if raw else None
+
+
+def datetime_input(value):
+    """datetime -> text for an <input type="datetime-local"> (empty if None)."""
+    return value.strftime("%Y-%m-%dT%H:%M") if value else ""
