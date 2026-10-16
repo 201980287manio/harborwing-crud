@@ -2,9 +2,9 @@
 
 A web application that lets HarborWing Air employees work with the airline database **without writing SQL**. It is built with Python, Flask and `mysql-connector-python`, and it uses the database created in the Midterm Drill (Part 1).
 
-> **Database (Part 1):** `https://github.com/201980287manio/harborwing-db.git`
-> **Database version / commit used:** `b7e5bce` (branch `main`)
-> **Explainer video:** `<add video link here>`
+> **Database (Part 1):** https://github.com/201980287manio/harborwing-db.git
+> **Database version / commit used:** b7e5bce (branch `main`)
+> **Explainer video:** https://drive.google.com/file/d/1s3EwEgDh7eHTLKywIL3EiTm0JeLvA2rx/view?usp=drive_link
 
 **No schema changes were made.** The application uses the Part 1 schema and its seed data exactly as they are.
 
