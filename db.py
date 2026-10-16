@@ -5,6 +5,7 @@ so no credentials live in source code. Every query uses %s placeholders
 (parameterized queries) so user input is never pasted into SQL text.
 """
 import os
+from contextlib import contextmanager
 
 import mysql.connector
 from dotenv import load_dotenv
@@ -74,6 +75,27 @@ def run_transaction(statements):
     try:
         for sql, params in statements:
             cur.execute(sql, params)
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    finally:
+        cur.close()
+
+
+@contextmanager
+def transaction():
+    """Use as:  with transaction() as cur: cur.execute(...); cur.execute(...)
+
+    Everything inside the block is ONE transaction: it is committed when the
+    block ends normally and rolled back if any statement raises an error.
+    Unlike run_transaction(), the block can read cur.lastrowid between steps
+    (needed to link a freshly created record).
+    """
+    db = get_db()
+    cur = db.cursor()
+    try:
+        yield cur
         db.commit()
     except Exception:
         db.rollback()

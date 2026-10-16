@@ -12,7 +12,7 @@ load_dotenv()
 
 from db import close_db, query_one  # noqa: E402
 from routes import (agents, airports, costs, legs, passengers,  # noqa: E402
-                    payments, schedules)
+                    payments, reference, reservations, schedules)
 
 # Table names are fixed here (never taken from user input).
 TABLES = [
@@ -26,7 +26,8 @@ def create_app():
     app = Flask(__name__)
     app.secret_key = os.getenv("SECRET_KEY", "dev-only-change-me")
     app.teardown_appcontext(close_db)
-    for module in (airports, passengers, agents, payments, schedules, legs, costs):
+    for module in (reservations, passengers, agents, payments, airports, schedules,
+                   legs, costs, reference):
         app.register_blueprint(module.bp)
 
     @app.route("/")

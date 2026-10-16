@@ -3,34 +3,40 @@
 {% block content %}
 <div class="head">
   <h1>{{ title }}</h1>
-  <a class="btn" href="{{ new_url }}">+ New {{ singular }}</a>
+  {% if new_url %}<a class="btn" href="{{ new_url }}">+ New {{ singular }}</a>{% endif %}
 </div>
 <form method="get" class="search">
   <input name="q" value="{{ q }}" placeholder="{{ placeholder }}">
   <button type="submit">Search</button>
   {% if q %}<a href="{{ request.path }}">Clear</a>{% endif %}
 </form>
+{% set has_actions = edit_endpoint or view_endpoint %}
 <table>
   <thead>
     <tr>
       {% for key, label in columns %}<th>{{ label }}</th>{% endfor %}
-      <th></th>
+      {% if has_actions %}<th></th>{% endif %}
     </tr>
   </thead>
   <tbody>
   {% for row in rows %}
     <tr>
       {% for key, label in columns %}<td>{{ row[key] if row[key] is not none else '' }}</td>{% endfor %}
+      {% if has_actions %}
       <td class="actions">
-        <a href="{{ url_for(edit_endpoint, item_id=row[id_key]) }}">Edit</a>
+        {% if view_endpoint %}<a href="{{ url_for(view_endpoint, item_id=row[id_key]) }}">View</a>{% endif %}
+        {% if edit_endpoint %}<a href="{{ url_for(edit_endpoint, item_id=row[id_key]) }}">Edit</a>{% endif %}
+        {% if delete_endpoint %}
         <form method="post" action="{{ url_for(delete_endpoint, item_id=row[id_key]) }}"
               onsubmit="return confirm('Delete {{ singular }} {{ row[id_key] }}?');">
           <button type="submit" class="danger">Delete</button>
         </form>
+        {% endif %}
       </td>
+      {% endif %}
     </tr>
   {% else %}
-    <tr><td colspan="{{ columns|length + 1 }}">No records found.</td></tr>
+    <tr><td colspan="{{ columns|length + (1 if has_actions else 0) }}">No records found.</td></tr>
   {% endfor %}
   </tbody>
 </table>

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Reservation {{ r.reservation_id }}{% endblock %}
+{% block content %}
+<div class="head">
+  <h1>Reservation {{ r.reservation_id }}</h1>
+  <div class="actions">
+    <a class="btn" href="{{ url_for('reservations.edit', item_id=r.reservation_id) }}">Edit</a>
+    <a href="{{ url_for('reservations.index') }}">Back to list</a>
+  </div>
+</div>
+
+<div class="card">
+  <dl class="details">
+    <dt>Main passenger</dt>
+    <dd>{{ r.first_name }} {{ r.second_name or '' }} {{ r.last_name }} (ID {{ r.passenger_id }})</dd>
+    <dt>Email / phone</dt><dd>{{ r.email or '-' }} / {{ r.phone or '-' }}</dd>
+    <dt>Booking agent</dt><dd>{{ r.agent_name or '(direct booking)' }}</dd>
+    <dt>Status</dt><dd>{{ r.status_code }}</dd>
+    <dt>Ticket type / class</dt><dd>{{ r.ticket_type_code }} / {{ r.travel_class_code }}</dd>
+    <dt>Number in party</dt><dd>{{ r.party_size }}</dd>
+    <dt>Created (UTC)</dt><dd>{{ r.created_at }}</dd>
+  </dl>
+</div>
+
+<h2>Flight legs</h2>
+<table>
+  <thead><tr><th>Leg</th><th>Flight</th><th>Route</th><th>Scheduled departure</th><th>Scheduled arrival</th>
+    <th>Actual departure</th><th>Actual arrival</th><th></th></tr></thead>
+  <tbody>
+  {% for l in legs %}
+    <tr>
+      <td>{{ l.leg_id }}</td><td>{{ l.flight_number }}</td>
+      <td>{{ l.origin_airport_code }} to {{ l.destination_airport_code }}</td>
+      <td>{{ l.scheduled_departure }}</td><td>{{ l.scheduled_arrival }}</td>
+      <td>{{ l.actual_departure or 'not yet' }}</td><td>{{ l.actual_arrival or 'not yet' }}</td>
+      <td class="actions">
+        <form method="post" action="{{ url_for('reservations.remove_leg', item_id=r.reservation_id, leg_id=l.leg_id) }}"
+              onsubmit="return confirm('Remove leg {{ l.leg_id }} from this reservation? The leg itself is kept.');">
+          <button type="submit" class="danger">Remove link</button>
+        </form>
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="8">No flight legs on this reservation yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+<form method="post" action="{{ url_for('reservations.add_leg', item_id=r.reservation_id) }}" class="inline-form">
+  {% if available_legs %}
+  <select name="leg_id" required>
+    {% for l in available_legs %}
+      <option value="{{ l.leg_id }}">Leg {{ l.leg_id }} - {{ l.flight_number }} ({{ l.origin_airport_code }} to {{ l.destination_airport_code }}) {{ l.scheduled_departure }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit">Add flight leg</button>
+  {% else %}<span>No more legs available to add.</span>{% endif %}
+</form>
+
+<h2>Payments</h2>
+<table>
+  <thead><tr><th>ID</th><th>Status</th><th>Date (UTC)</th><th>Amount</th><th>Also linked to</th><th></th></tr></thead>
+  <tbody>
+  {% for p in payments %}
+    <tr>
+      <td>{{ p.payment_id }}</td><td>{{ p.status_code }}</td><td>{{ p.payment_date }}</td>
+      <td>{{ p.payment_amount }}</td>
+      <td>{{ p.shared_count - 1 }} other reservation(s)</td>
+      <td class="actions">
+        <form method="post" action="{{ url_for('reservations.remove_payment', item_id=r.reservation_id, payment_id=p.payment_id) }}"
+              onsubmit="return confirm('Remove the link to payment {{ p.payment_id }}? The payment itself is kept.');">
+          <button type="submit" class="danger">Remove link</button>
+        </form>
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6">No payments linked yet.</td></tr>
+  {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr><td colspan="3"><strong>Total of linked payments</strong></td>
+        <td colspan="3">{{ totals.total_all }} (of which PAID: {{ totals.total_paid }})</td></tr>
+  </tfoot>
+</table>
+<p class="note">Each payment is counted once. A payment shared with other reservations is shown at its
+  full amount, because the database does not store how much of it belongs to each reservation.</p>
+
+<form method="post" action="{{ url_for('reservations.add_payment', item_id=r.reservation_id) }}" class="inline-form">
+  {% if available_payments %}
+  <select name="payment_id" required>
+    {% for p in available_payments %}
+      <option value="{{ p.payment_id }}">Payment {{ p.payment_id }} - {{ p.status_code }} - {{ p.payment_amount }} ({{ p.payment_date }})</option>
+    {% endfor %}
+  </select>
+  <button type="submit">Link existing payment</button>
+  {% else %}<span>No more payments available to link.</span>{% endif %}
+</form>
+
+<h3>Create a new payment and link it</h3>
+<form method="post" action="{{ url_for('reservations.new_payment', item_id=r.reservation_id) }}" class="inline-form">
+  <select name="status_code" required>
+    {% for s in payment_statuses %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+  </select>
+  <input type="datetime-local" name="payment_date" required>
+  <input type="number" name="payment_amount" step="0.01" min="0.01" placeholder="Amount" required>
+  <button type="submit">Create and link payment</button>
+</form>
+{% endblock %}

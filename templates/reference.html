@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Reference codes{% endblock %}
+{% block content %}
+<h1>Reference codes (read-only)</h1>
+<p class="note">These codes are managed outside this database (no local reference tables).
+  The values below are the ones currently in use; the seed data uses demonstration values.</p>
+{% for title, rows in sections %}
+  <h2>{{ title }}</h2>
+  <table>
+    <thead><tr><th>Code</th><th>Times used</th></tr></thead>
+    <tbody>
+      {% for row in rows %}<tr><td>{{ row.code }}</td><td>{{ row.used }}</td></tr>
+      {% else %}<tr><td colspan="2">None in use.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+{% endfor %}
+{% endblock %}

@@ -24,3 +24,12 @@ input, textarea { width:100%; padding:8px; border:1px solid #b9c5dd; border-radi
 .flash { padding:10px 14px; border-radius:4px; margin-bottom:12px; }
 .flash.success { background:#dff3e5; color:var(--green); }
 .flash.error { background:#fbe3e1; color:var(--red); }
+h2 { color:var(--dark); margin-top:28px; }
+.card { background:#fff; padding:14px 18px; margin-bottom:8px; }
+.details { display:grid; grid-template-columns:200px 1fr; gap:6px 16px; margin:0; }
+.details dt { font-weight:600; }
+.details dd { margin:0; }
+.inline-form { display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 4px; align-items:center; }
+.inline-form select, .inline-form input { width:auto; min-width:200px; flex:1; max-width:520px; padding:8px; border:1px solid #b9c5dd; border-radius:4px; font:inherit; }
+.note { color:#444; font-size:0.9rem; margin:6px 0 12px; }
+tfoot td { background:#e3ebf8; }

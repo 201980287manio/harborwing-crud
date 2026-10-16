@@ -10,6 +10,7 @@
   <header>
     <a class="brand" href="{{ url_for('index') }}">HarborWing Air</a>
     <nav>
+      <a href="{{ url_for('reservations.index') }}">Reservations</a>
       <a href="{{ url_for('passengers.index') }}">Passengers</a>
       <a href="{{ url_for('agents.index') }}">Agents</a>
       <a href="{{ url_for('payments.index') }}">Payments</a>
@@ -17,6 +18,8 @@
       <a href="{{ url_for('schedules.index') }}">Schedules</a>
       <a href="{{ url_for('legs.index') }}">Legs</a>
       <a href="{{ url_for('costs.index') }}">Costs</a>
+      <a href="{{ url_for('reference.calendar') }}">Calendar</a>
+      <a href="{{ url_for('reference.reference') }}">Codes</a>
       <!-- Add links here as you build each module -->
     </nav>
   </header>
